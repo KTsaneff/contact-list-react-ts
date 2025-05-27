@@ -1,5 +1,3 @@
-import React from "react";
-
 import Greeting from "./Greeting";
 import AgeBanner from "./AgeBanner";
 
