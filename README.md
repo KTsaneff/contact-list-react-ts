@@ -25,7 +25,7 @@ This is a simple contact management app built using **React**, **TypeScript**, a
 
 ## 🌐 Live Demo (GitHub Pages)
 
-🔗 Coming soon...
+🔗 https://ktsaneff.github.io/contact-list-react-ts/
 
 ## 📂 Project Setup
 
