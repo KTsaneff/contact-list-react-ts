@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import './ContactList.css';
 
 import ContactCard from './ContactCard';
@@ -6,7 +7,10 @@ import ContactCard from './ContactCard';
 import type { Contact } from './Contact';
 
 function App() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>(() => {
+    const stored = localStorage.getItem('contacts');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -60,6 +64,22 @@ function App() {
   const handleDeleteContact = (id: number) => {
     setContacts(contacts.filter(c => c.id !== id));
   };
+
+  const handleResetContacts = () => {
+    if(confirm('Are you sure you want to delete all contacts?')) {
+      setContacts([]);
+      setEditingId(null);
+      setName('');
+      setPhone('');
+      setEmail('');
+      setError('');
+      setSearchTerm('');
+    }
+  }
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const handleEditContact = (contact: Contact) => {
     setName(contact.name);
@@ -124,6 +144,19 @@ function App() {
 
 
     <h2>All Contacts:</h2>
+
+    <button 
+      onClick={handleResetContacts}
+      style={{
+        backgroundColor: '#e53935',
+        color: 'white',
+        border: 'none',
+        borderRadius: '6px',
+        padding: '0.5rem 1rem',
+        marginBottom: '1rem',
+        cursor: 'pointer'
+      }}
+    >🔁 Reset All Contacts</button>
 
     {contacts.length === 0 ? (
         <p>No contacts added yet.</p>
