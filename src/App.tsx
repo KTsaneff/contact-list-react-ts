@@ -12,6 +12,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null)
   
 
   const handleAddContact = () => {
@@ -34,14 +35,21 @@ function App() {
       return;
     }
 
-    const newContact: Contact = {
-      id: Date.now(),
-      name,
-      phone,
-      email,
-    };
-
-    setContacts([...contacts, newContact]);
+    if(editingId !== null) {
+      const updatedContacts = contacts.map((contact) => 
+        contact.id === editingId ? { ...contact, name, phone, email } : contact
+      );
+      setContacts(updatedContacts);
+      setEditingId(null);
+    } else {
+      const newContact: Contact = {
+        id: Date.now(),
+        name,
+        phone,
+        email,
+      };
+      setContacts([...contacts, newContact]);
+    }
 
     setName('');
     setPhone('');
@@ -52,6 +60,14 @@ function App() {
   const handleDeleteContact = (id: number) => {
     setContacts(contacts.filter(c => c.id !== id));
   };
+
+  const handleEditContact = (contact: Contact) => {
+    setName(contact.name);
+    setPhone(contact.phone);
+    setEmail(contact.email);
+    setEditingId(contact.id);
+    setError('');
+  }
 
   const filteredContacts = contacts.filter((c) =>
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -88,7 +104,7 @@ function App() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <button type="submit">Add Contact</button>
+        <button type="submit">{editingId ? 'Save Changes' : 'Add Contact'}</button>
       </form>
 
     <input
@@ -116,7 +132,11 @@ function App() {
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {filteredContacts.map((c) => (
-            <ContactCard key={c.id} contact={c} onDelete={handleDeleteContact} />
+            <ContactCard 
+              key={c.id} 
+              contact={c} 
+              onDelete={handleDeleteContact}
+              onEdit={handleEditContact} />
           ))}
       </ul>
     )}
