@@ -11,6 +11,7 @@ function App() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   
 
   const handleAddContact = () => {
@@ -52,6 +53,12 @@ function App() {
     setContacts(contacts.filter(c => c.id !== id));
   };
 
+  const filteredContacts = contacts.filter((c) =>
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.phone.includes(searchTerm) ||
+    c.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
   <div className="app-container">
     <h1>Simple Contact List</h1>
@@ -84,16 +91,36 @@ function App() {
         <button type="submit">Add Contact</button>
       </form>
 
+    <input
+      type="text"
+      placeholder="Search contacts..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      style={{
+        padding: '0.5rem',
+        marginBottom: '1rem',
+        width: '100%',
+        borderRadius: '6px',
+        border: '1px solid #ccc',
+        fontSize: '1rem'
+      }}
+    />
+
+
     <h2>All Contacts:</h2>
+
     {contacts.length === 0 ? (
-      <p>No contacts added yet.</p>
-    ) : (
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {contacts.map((c) => (
-          <ContactCard key={c.id} contact={c} onDelete={handleDeleteContact}/>
-        ))}
+        <p>No contacts added yet.</p>
+      ) : filteredContacts.length === 0 ? (
+        <p>No contacts match your search.</p>
+      ) : (
+        <ul style={{ listStyle: 'none', padding: 0 }}>
+          {filteredContacts.map((c) => (
+            <ContactCard key={c.id} contact={c} onDelete={handleDeleteContact} />
+          ))}
       </ul>
     )}
+
   </div>
 );
 
